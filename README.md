@@ -306,6 +306,16 @@ Nello stesso repository è inclusa una semplice pagina statica (`index.html`) ch
 
 Questa pagina può essere pubblicata su GitHub Pages come sito statico senza dipendenze esterne. Basta aprire `index.html` o ospitarla nella branch `gh-pages`.
 
+**Risposte automatiche con AI**
+
+Il chat bot può inoltrare i messaggi a ChatGPT (modello OpenAI) e restituire risposte dinamiche. Per abilitarlo:
+
+1. Imposta la variabile globale `OPENAI_API_KEY` nel tuo browser (puoi aggiungerla in uno script `<script>window.OPENAI_API_KEY = 'la-tua-chiave';</script>` prima di includere il codice).
+2. Il codice effettua una chiamata `fetch` all'endpoint `https://api.openai.com/v1/chat/completions`.
+3. Se l'API non è disponibile o manca la chiave, il bot risponderà con un messaggio di errore.
+
+Questo ti permette di porre qualsiasi dubbio al bot e ottenere una risposta automatica dall'AI.
+
 ## Getting started
 
 This is some examples of what Nightwind does by default:
