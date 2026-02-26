@@ -296,6 +296,16 @@ var nightwind = {
 </details>
 
 
+## Demo Chat Interface
+
+Nello stesso repository è inclusa una semplice pagina statica (`index.html`) che mostra un'interfaccia di chat. L'utente può inserire messaggi nel campo in basso e, ad ogni invio, il bot chiamato **"deniso"** risponde sempre con la stringa:
+
+```
+ non ho capito
+```
+
+Questa pagina può essere pubblicata su GitHub Pages come sito statico senza dipendenze esterne. Basta aprire `index.html` o ospitarla nella branch `gh-pages`.
+
 ## Getting started
 
 This is some examples of what Nightwind does by default:
