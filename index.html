@@ -53,6 +53,7 @@
     #input-area {
       display: flex;
       border-top: 1px solid #ccc;
+      position: relative;
     }
 
     #input-area input {
@@ -80,10 +81,18 @@
 </head>
 <body>
   <div id="chat-container">
+    <h1 style="text-align:center; margin:16px 0; font-size:1.5rem;">IL mio amico ❤️❤️</h1>
     <div id="messages"></div>
     <div id="input-area">
-      <input type="text" id="user-input" placeholder="Scrivi un messaggio..." />
+      <input type="text" id="user-input" placeholder="🔍 Scrivi un messaggio... 😄" />
+      <button id="emoji-btn" title="Scegli emoji">😊</button>
+      <button id="record-btn" title="Registra audio">🎤</button>
       <button id="send-btn" disabled>Invia</button>
+    </div>
+    <div id="emoji-picker" style="display:none; position:absolute; bottom:50px; left:10px; background:#fff; border:1px solid #ccc; padding:8px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+      <!-- emoji options -->
+      😂 😂 ❤️ 😍 🤔 🙌 👍 👎 🎉
+    </div>
     </div>
   </div>
 
@@ -92,10 +101,22 @@
     const inputEl = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
 
-    function appendMessage(text, sender) {
+    function appendMessage(text, sender, audioUrl) {
       const msg = document.createElement('div');
       msg.classList.add('message', sender);
-      msg.textContent = text;
+      if (audioUrl) {
+        const audio = document.createElement('audio');
+        audio.src = audioUrl;
+        audio.controls = true;
+        msg.appendChild(audio);
+        if (text) {
+          const span = document.createElement('span');
+          span.textContent = text;
+          msg.appendChild(span);
+        }
+      } else {
+        msg.textContent = text;
+      }
       messagesEl.appendChild(msg);
       messagesEl.scrollTop = messagesEl.scrollHeight;
     }
@@ -109,6 +130,8 @@
         appendMessage(' hai ragione, Jacopo fusci è bruttissimo', 'bot');
       } else if (txt === 'hadamy è brutta' || txt === 'hadamy e\' brutta') {
         appendMessage(' no, è bellissima', 'bot');
+      } else if (txt === 'sei bella') {
+        appendMessage('grazie ❤️❤️', 'bot');
       } else if (txt.endsWith('?')) {
         appendMessage('tutte le informazioni di ai', 'bot');
       } else {
@@ -135,6 +158,60 @@
         sendBtn.click();
       }
     });
+
+    // emoji picker
+    const emojiBtn = document.getElementById('emoji-btn');
+    const emojiPicker = document.getElementById('emoji-picker');
+    emojiBtn.addEventListener('click', () => {
+      emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+    });
+    emojiPicker.addEventListener('click', (e) => {
+      if (e.target.textContent) {
+        inputEl.value += e.target.textContent;
+        sendBtn.disabled = inputEl.value.trim() === '';
+      }
+    });
+
+    // close picker when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) {
+        emojiPicker.style.display = 'none';
+      }
+    });
+
+    // audio recording
+    let mediaRecorder;
+    let audioChunks = [];
+    const recordBtn = document.getElementById('record-btn');
+    recordBtn.addEventListener('click', async () => {
+      if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            const url = URL.createObjectURL(blob);
+            appendMessage('', 'user', url);
+            // trigger bot reply normally
+            sendBotReply();
+          };
+          mediaRecorder.start();
+          recordBtn.textContent = '⏹️';
+        } catch (err) {
+          console.error('Microfono non accessibile', err);
+        }
+      } else {
+        mediaRecorder.stop();
+        recordBtn.textContent = '🎤';
+      }
+    });
+
+    function sendBotReply() {
+      // reuse existing logic by calling with dummy text
+      setTimeout(() => botReply(''), 300);
+    }
 
     // focus on page load
     inputEl.focus();
