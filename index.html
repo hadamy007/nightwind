@@ -133,8 +133,8 @@
       messagesEl.scrollTop = messagesEl.scrollHeight;
     }
 
-    function botReply(userText) {
-      // bot "deniso" risponde di default con " non ho capito"
+    async function botReply(userText) {
+      // bot "deniso" risponde di default con " non ho capito" o utilizza un AI esterno
       const txt = userText.toLowerCase().trim();
       if (txt === 'sofia puzza') {
         appendMessage(' sono completamente d\'accordo con te', 'bot');
@@ -144,10 +144,10 @@
         appendMessage(' no, è bellissima', 'bot');
       } else if (txt === 'sei bella') {
         appendMessage('grazie ❤️❤️', 'bot');
-      } else if (txt.endsWith('?')) {
-        appendMessage('tutte le informazioni di ai', 'bot');
       } else {
-        appendMessage(' non ho capito', 'bot');
+        // ogni altra frase viene inoltrata all'AI
+        const aiReply = await getAIResponse(userText);
+        appendMessage(aiReply, 'bot');
       }
     }
 
@@ -238,6 +238,31 @@
     function sendBotReply() {
       // reuse existing logic by calling with dummy text
       setTimeout(() => botReply(''), 300);
+    }
+
+    async function getAIResponse(prompt) {
+      // utilzza l'API OpenAI ChatCompletion; imposta la variabile OPENAI_API_KEY con la tua chiave
+      try {
+        const res = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + (window.OPENAI_API_KEY || ''),
+          },
+          body: JSON.stringify({
+            model: 'gpt-3.5-turbo',
+            messages: [{ role: 'user', content: prompt }],
+            max_tokens: 150,
+          }),
+        });
+        const data = await res.json();
+        if (data && data.choices && data.choices[0].message) {
+          return data.choices[0].message.content.trim();
+        }
+      } catch (e) {
+        console.error('Errore AI', e);
+      }
+      return 'Mi dispiace, non posso rispondere al momento.';
     }
 
     // focus on page load
