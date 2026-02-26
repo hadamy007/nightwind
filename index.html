@@ -134,21 +134,22 @@
     }
 
     async function botReply(userText) {
-      // bot "deniso" risponde di default con " non ho capito" o utilizza un AI esterno
+      // rispondi logicamente usando l'AI per ogni input; manteniamo alcune risposte personalizzate
       const txt = userText.toLowerCase().trim();
+      let response;
       if (txt === 'sofia puzza') {
-        appendMessage(' sono completamente d\'accordo con te', 'bot');
+        response = ' sono completamente d\'accordo con te';
       } else if (txt === 'jacopo è brutto' || txt === 'jacopo e\' brutto' || txt === 'jacopo è brutto') {
-        appendMessage(' hai ragione, Jacopo fusci è bruttissimo', 'bot');
+        response = ' hai ragione, Jacopo fusci è bruttissimo';
       } else if (txt === 'hadamy è brutta' || txt === 'hadamy e\' brutta') {
-        appendMessage(' no, è bellissima', 'bot');
+        response = ' no, è bellissima';
       } else if (txt === 'sei bella') {
-        appendMessage('grazie ❤️❤️', 'bot');
+        response = 'grazie ❤️❤️';
       } else {
-        // ogni altra frase viene inoltrata all'AI
-        const aiReply = await getAIResponse(userText);
-        appendMessage(aiReply, 'bot');
+        // per tutto il resto, affidiamoci all'AI per ottenere una risposta sensata
+        response = await getAIResponse(userText);
       }
+      appendMessage(response, 'bot');
     }
 
     sendBtn.addEventListener('click', () => {
