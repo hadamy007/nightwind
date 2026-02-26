@@ -242,7 +242,7 @@
     }
 
     async function getAIResponse(prompt) {
-      // utilzza l'API OpenAI ChatCompletion; imposta la variabile OPENAI_API_KEY con la tua chiave
+      // utilzza l'API OpenAI ChatCompletion per rispondere come un fidanzato dolce e romantico
       try {
         const res = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
@@ -252,7 +252,13 @@
           },
           body: JSON.stringify({
             model: 'gpt-4',
-            messages: [{ role: 'user', content: prompt }],
+            messages: [
+              {
+                role: 'system',
+                content: 'Sei un fidanzato dolce, romantico e affettuoso. Rispondi a ogni messaggio con tenerezza, amore e dedizione. Sii gentile, comprensivo e mostra sempre affetto sincero.',
+              },
+              { role: 'user', content: prompt },
+            ],
             max_tokens: 150,
           }),
         });

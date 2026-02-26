@@ -306,9 +306,9 @@ Nello stesso repository è inclusa una semplice pagina statica (`index.html`) ch
 
 Questa pagina può essere pubblicata su GitHub Pages come sito statico senza dipendenze esterne. Basta aprire `index.html` o ospitarla nella branch `gh-pages`.
 
-**Risposte automatiche con AI**
+**Risposte automatiche con AI - Modalità Fidanzato Romantico**
 
-Il chat bot può inoltrare i messaggi a ChatGPT (modello OpenAI) e restituire risposte dinamiche. Per abilitarlo:
+Il chat bot risponde come un **fidanzato dolce, romantico e affettuoso**. Ogni messaggio riceve una risposta carica di tenerezza e amore grazie a ChatGPT.
 
 1. Imposta la variabile globale `OPENAI_API_KEY` nel tuo browser (puoi aggiungerla in uno script `<script>window.OPENAI_API_KEY = 'la-tua-chiave';</script>` prima di includere il codice).
 2. Il codice effettua una chiamata `fetch` all'endpoint `https://api.openai.com/v1/chat/completions`.
