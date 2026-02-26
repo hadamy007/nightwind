@@ -86,9 +86,11 @@
     <div id="input-area">
       <input type="text" id="user-input" placeholder="🔍 Scrivi un messaggio... 😄" />
       <button id="emoji-btn" title="Scegli emoji">😊</button>
+      <button id="photo-btn" title="Scatta foto">📷</button>
       <button id="record-btn" title="Registra audio">🎤</button>
       <button id="send-btn" disabled>Invia</button>
     </div>
+    <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none" />
     <div id="emoji-picker" style="display:none; position:absolute; bottom:50px; left:10px; background:#fff; border:1px solid #ccc; padding:8px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
       <!-- emoji options -->
       😂 😂 ❤️ 😍 🤔 🙌 👍 👎 🎉
@@ -101,10 +103,20 @@
     const inputEl = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
 
-    function appendMessage(text, sender, audioUrl) {
+    function appendMessage(text, sender, audioUrl, imageUrl) {
       const msg = document.createElement('div');
       msg.classList.add('message', sender);
-      if (audioUrl) {
+      if (imageUrl) {
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.style.maxWidth = '100%';
+        msg.appendChild(img);
+        if (text) {
+          const span = document.createElement('span');
+          span.textContent = text;
+          msg.appendChild(span);
+        }
+      } else if (audioUrl) {
         const audio = document.createElement('audio');
         audio.src = audioUrl;
         audio.controls = true;
@@ -193,7 +205,7 @@
           mediaRecorder.onstop = () => {
             const blob = new Blob(audioChunks, { type: 'audio/webm' });
             const url = URL.createObjectURL(blob);
-            appendMessage('', 'user', url);
+            appendMessage('', 'user', null, null, url);
             // trigger bot reply normally
             sendBotReply();
           };
@@ -205,6 +217,21 @@
       } else {
         mediaRecorder.stop();
         recordBtn.textContent = '🎤';
+      }
+    });
+    
+    // photo capture
+    const photoBtn = document.getElementById('photo-btn');
+    const photoInput = document.getElementById('photo-input');
+    photoBtn.addEventListener('click', () => {
+      photoInput.click();
+    });
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        appendMessage('', 'user', null, url);
+        sendBotReply();
       }
     });
 
